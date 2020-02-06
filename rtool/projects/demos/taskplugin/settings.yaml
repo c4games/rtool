@@ -1,0 +1,33 @@
+# resroot和plugindir不需要更改:
+resroot: $MYDIR/..
+plugindir: $MYDIR/plugin
+# runorder列表中配置的顺序即是各个Action的执行顺序
+runorder: ['CustomAction','MakeCsb','PackupTexture','PackupAnim','COPYRES','X2Mc','CompressTexture','EImg']
+
+# 各个Action的声明
+taskdefs:
+    # Action的名称
+    SampleAction:
+        # Action 的代码文件，位于.rtool/plugin目录下        
+        module: SampleAction
+        # Action 配置的默认参数，当局部配置的options参数不全时使用这里的配置补全
+        options:
+            __ANY__: {opt: Hello}
+            iOS: {opt: "Hello iOS world"}
+            Android: {opt: "Hello Android world"}
+            iOS_Test: {opt: "Hello iOS_Test world"}
+        #Action作为输入使用的资源文件的根目录,$resroot不需要修改，框架会自动使用-i参数替换$resroot
+        #在局部配置文件xxx.ncfg.yaml中使用的路径是相对路径，用于简化配置文件编写，而input-root这一项就是相对路径的根路径
+        input-root: $resroot/svn/dmres/UIProject/cocosstudio
+        #与input-root指定输出资源的根目录 
+        output-root: $resroot
+    CustomAction:
+        module: CustomPluginDemo
+        options:
+            __ANY__: {opt: "Hello"}
+            iOS: {opt: "Hello iOS world"}
+            Android: {opt: "Hello Android world"}
+            iOS_Test: {opt: "Hello iOS_Test world"}
+        input-root: $resroot/svn/dmres/UIProject/cocosstudio
+        output-root: $resroot
+
