@@ -1,0 +1,118 @@
+# resroot和plugindir不需要更改:
+resroot: $MYDIR/..
+plugindir: $MYDIR/plugin
+# runorder列表中配置的顺序即是各个插件的执行顺序
+# 这里存在一个问题，由于CompressTexture以来前面操作的生成结果，但是当按照顺序进行至CompressTexture时有可能前置操作尚未完成
+# 目前的解决方法是在CompressTexture和前置的图片操作之间先执行X2Mc或MakeCsb，确保前置图片操作完成
+runorder: ['PackupTexture','COPYRES','X2Mc',"CompressTexture"]
+
+# 各个插件的描述
+taskdefs:
+    # 插件对外的名称
+    SampleAction:
+        # 插件的python代码文件名，位于rtool/taskplugin目录下或rtool/projects/project_name/taskplugin目录下        
+        module: SampleAction
+        # 插件配置的默认参数，当.ncfg.yaml局部配置的options参数不全时使用这里的配置补全
+        options:
+            __ANY__: {opt: Hello}
+            iOS: {opt: "Hello iOS world"}
+            Android: {opt: "Hello Android world"}
+            iOS_Test: {opt: "Hello iOS_Test world"}
+        #对于每一种插件可以设置其工作的输入输出路径的根目录，路径可以使用参数input_root,output_root,cache_dir,project_name,target
+        #正常使用过程中插件的输入输出目录根目录应保持以下默认配置
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    # 插件对外的名称
+    EImg:
+        # 插件的python代码文件名，位于rtool/taskplugin目录下或rtool/projects/project_name/taskplugin目录下        
+        module: EncryptImage
+        # 插件配置的默认参数，当.ncfg.yaml局部配置的options参数不全时使用这里的配置补全
+        options:
+            __ANY__: {key: "DEMOKEY123456789"}
+            iOS: {key: "DEMOKEY123456789"}
+            Android: {key: "DEMOKEY123456789"}
+            iOS_Test: {key: "DEMOKEY123456789"}
+        #对于每一种插件可以设置其工作的输入输出路径的根目录，路径可以使用参数input_root,output_root,cache_dir,project_name,target
+        #正常使用过程中插件的输入输出目录根目录应保持以下默认配置
+        input-root: $cache_dir/pack/$project_name/$target
+        output-root: $cache_dir/encrypt/$project_name/$target
+    MakeCsb:      
+        module: MakeCSB
+        options:
+            __ANY__: {texture_prefix: "", texture_type: "0x80", csb_prefix: "",font_prefix: ""}
+            iOS: {texture_prefix: "", texture_type: "0x80", csb_prefix: "",font_prefix: ""}
+            Android: {texture_prefix: "", texture_type: "0x80", csb_prefix: "",font_prefix: ""}
+            iOS_Test: {texture_prefix: "", texture_type: "0x80", csb_prefix: "",font_prefix: ""}
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    SyncDir:
+        module: SyncFiles
+        options:
+            __ANY__: {}
+            iOS: {}
+            Android: {}
+            iOS_Test: {}
+        input-root: $input_root
+        output-root: $cache_dir/pack
+    X2Mc:
+        module: Xml2Mclib
+        options:
+            __ANY__: {format: "json", compact: True}
+            iOS: {format: "json", compact: True}
+            Android: {format: "json", compact: True}
+            iOS_Test: {format: "json", compact: True}
+        rccache: False
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    COPYRES:
+        alias: cr
+        module: CopyRes
+        options:
+            __ANY__: {cpall: False,cpextlist: '.fnt'}
+            iOS: {cpall: False,cpextlist: '.fnt'}
+            Android: {cpall: False,cpextlist: '.fnt'}
+            iOS_Test: {cpall: False,cpextlist: '.fnt'}
+        rccache: False
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    PackupTexture:
+        alias: tp
+        module: NTexPacker
+        options:
+            __ANY__: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            iOS: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            Android: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            iOS_Test: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    CompressTexture:
+        alias: ct
+        module: Compresser
+        options:
+            __ANY__: {opt: "RGBA8888", type: "__ANY__", quality: "65-80"}
+            iOS: {opt: "PVRTC4", type: "pvr", quality: "65-80"}
+            Android: {opt: "ETC1", type: "etc", quality: "65-80"}
+            iOS_Test: {opt: "PVRTC4", type: "pvr", quality: "65-80"}
+        input-root: $cache_dir/pack/$project_name/$target
+        output-root: $cache_dir/compress/$project_name/$target
+    PackupAnim:
+        alias: anim
+        module: AnimPacker
+        options:
+            __ANY__: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            iOS: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            Android: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+            iOS_Test: {opt: "RGBA8888", format: "cocos2d", scale: 1}
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+    CSD2CSB:
+        alias: c2c
+        module: CsdPublish
+        options:
+            __ANY__: {publish: "",'-s': "",'-d': "",Serializer_FlatBuffers: ""}
+            iOS: {publish: "",'-s': "",'-d': "",Serializer_FlatBuffers: ""}
+            Android: {publish: "",'-s': "",'-d': "",Serializer_FlatBuffers: ""}
+            iOS_Test: {publish: "",'-s': "",'-d': "",Serializer_FlatBuffers: ""}
+        input-root: $input_root
+        output-root: $cache_dir/pack/$project_name/$target
+
