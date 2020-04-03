@@ -2,7 +2,7 @@
 resroot: $MYDIR/..
 plugindir: $MYDIR/plugin
 # runorder列表中配置的顺序即是各个Action的执行顺序
-runorder: ['CustomAction','MakeCsb','PackupTexture','PackupAnim','COPYRES','X2Mc','CompressTexture','EImg']
+runorder: ['COPYRES','CompressTexture']
 
 # 各个Action的声明
 taskdefs:

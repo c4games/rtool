@@ -1,8 +1,9 @@
 #coding=utf-8
 from rtool import utils
 from rtool.taskplugin.plugin.SampleAction import SampleAction
+import json
 
-logger = logger = utils.getLogger('CustomAction')
+logger = utils.getLogger('CustomAction')
 
 def run_with_configs(configs,tp=None):
 	logger.debug("Executing CustomAction")
@@ -19,4 +20,5 @@ class CustomPluginDemo(SampleAction):
 
 	def go(self,config):
 		SampleAction.go(self,config)
-		print "CustomPluginDemo "+config['options']['opt']
+		logger.warning("CustomPluginDemo ")
+		logger.warning(json.dumps(config,indent=2))

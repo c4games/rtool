@@ -240,6 +240,7 @@ class BaseParseConfigs(object):
 				# print "init "+dir_path
 				# print ncfg_dict
 				global_cfg_dict[dir_path]={}
+			# logger.error(task_settings['taskdefs'])
 			for file_path in ncfg_dict[dir_path]:
 				configs=[]
 				with open(file_path,'rb') as f:
@@ -583,6 +584,7 @@ class BaseParseConfigs(object):
 				self.check_and_regist_ncfg(cur_dir)
 
 		logger.debug("global config with %d items"%(len(list(global_cfg_dict.keys()))))
+		
 
 
 	def moveResToDestination(self,task_settings,global_cfg_dict,options,data_recorder):

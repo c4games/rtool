@@ -25,7 +25,7 @@ def relativePath(base_path,path):
 	pass
 
 def run():
-	print "TexPacker"
+	logger.debug("TexPacker")
 	pass
 
 def run_with_configs(configs,tp=None):

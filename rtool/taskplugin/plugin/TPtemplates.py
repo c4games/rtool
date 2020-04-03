@@ -10,3 +10,5 @@ etc_command_template = "TexturePacker --trim-mode None --sheet $dstname --data $
 tp_command_template = "TexturePacker --trim-mode None --sheet $dstname --data $plist --texture-format $textureformat --opt $opt $srcname --disable-rotation --border-padding 0 --shape-padding 0 --padding 0 --extrude 0 $extra"
 tp_2pic_rgb_command_template = "TexturePacker --texture-format $textureformat --trim-mode None --sheet $dstname --data $plist --opt $opt $srcname --size-constraints POT --force-squared --disable-rotation --border-padding 0 --shape-padding 0 --premultiply-alpha --padding 0 --extrude 0 $extra"
 alpha_command_template = "TexturePacker --trim-mode None --force-squared --sheet $dstname --data $plist --opt ALPHA $srcname --size-constraints POT --disable-rotation --border-padding 0 --shape-padding 0 --padding 0 --extrude 0"
+
+etcpack_command_template = "E:\\perf-trunk-2013\\Resource_Client\\TextureConvert\\ZEtcTool\\etcpack.exe $srcname $dstname -c etc1 -s slow"

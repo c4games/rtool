@@ -218,12 +218,7 @@ def runflash_dev(options):
     logger.setLevel(options['debug'] and logging.DEBUG or logging.INFO)
     mut.dumpOptions(options, logger)
 
-    input_root = mut.getProjectConfig('input_root')
-    if options["mode"] != None :
-        tempPath = input_root  + "_" + options["mode"]
-        if os.path.exists(tempPath):
-            input_root = tempPath
-            
+    input_root = mut.getProjectConfig('input_root')      
     rtool_root = mut.getProjectConfig('rtool_root')
     output_root = mut.getProjectConfig('output_root')
     cache_dir = mut.getProjectConfig('cache_dir')

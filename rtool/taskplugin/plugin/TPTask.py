@@ -91,7 +91,7 @@ class TPTask:
         f.seek(0)
         output = f.read()
         if not process.returncode==0:
-            self.logger.error("［错误］合图出现问题 "+output)
+            self.logger.error("［错误］合图出现问题 "+str(output))
             sys.exit(1)
 
         paths = expand_path_template_to_real_pathes(self.data_file)

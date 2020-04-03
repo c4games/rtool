@@ -1,0 +1,9 @@
+target: iOS
+items:
+  - type: COPYRES
+    input: []
+    options: {cpall: true}
+  - type: CompressTexture
+    input: []
+    options: {opt: "ETC1", type: "etc2p", quality: "65-80"}
+

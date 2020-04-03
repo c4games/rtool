@@ -1,1 +1,5 @@
 # This project specialized
+
+input_root: E:\\perf-trunk-2013\\Resource_Client\\Spine
+output_root: E:\\rtool\\example_result
+cache_dir: E:\\rtool\\temp
