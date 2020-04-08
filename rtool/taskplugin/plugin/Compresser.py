@@ -17,6 +17,7 @@ import rtool.utils as utils
 import rtool.taskplugin.plugin.TPtemplates as TPtemplates
 
 from rtool.taskplugin.plugin.TPTask import TPTask
+from rtool.taskplugin.plugin.MaliTask import MaliTask
 import rtool.taskplugin.plugin.TPCache2 as TPCache2
 
 
@@ -84,7 +85,9 @@ class CompressAction:
 		alpha_etc1_command_template = TPtemplates.alpha_etc1_command_template
 		png8_command_template = TPtemplates.png8_command_template
 		pvr_RGBA8888_command_template = TPtemplates.pvr_RGBA8888_command_template
-		etcpack_template = TPtemplates.etcpack_command_template
+		etcpack_template = TPtemplates.etcpack_alpha_command_template
+		etcpack_no_alpha_template = TPtemplates.etcpack_no_alpha_command_template
+		astc_template = TPtemplates.astc_template
 
 		command = ""
 
@@ -223,6 +226,7 @@ class CompressAction:
 
 						textureformat = config['options']['textureformat']
 						ext = ext_hash.get(textureformat,".pvr")
+						etcpack_root = utils.getProjectConfig("etcpack_root")
 
 						# command = tp_command_template
 						# command = command.replace("$dstname",os.path.join(config['output-root'],png_file_name.split('.')[0]+ext))
@@ -236,14 +240,88 @@ class CompressAction:
 						# tp_cache.command_arrange([TPTask.task_from_command(command.split())])
 						if not os.path.exists(config['output-root']):							
 							os.makedirs(config['output-root'])
-						img = Image.open(os.path.normpath(input_file_path))
-						ppm_path = os.path.join(os.path.split(input_file_path)[0],os.path.splitext(png_file_name)[0]+".ppm")
-						logger.warning(ppm_path)
-						img.save(ppm_path)
+						# img = Image.open(os.path.normpath(input_file_path))
+						# ppm_path = os.path.join(os.path.split(input_file_path)[0],os.path.splitext(png_file_name)[0]+".ppm")
+						# logger.warning(ppm_path)
+						# img.save(ppm_path)
 						command = etcpack_template
 						command = command.replace("$dstname",os.path.normpath(config['output-root']))
-						command = command.replace("$srcname",os.path.normpath(ppm_path))
+						command = command.replace("$srcname",os.path.normpath(input_file_path))
 						logger.debug("Compresser ETCPACK "+command)
+						os.chdir(etcpack_root)
+						tp_cache = TPCache2.TPCache2(tp)
+						tp_cache.command_arrange([MaliTask.task_from_command(command.split())])
+
+						# f = tempfile.TemporaryFile()
+						# process = subprocess.Popen(command.split(),stdout=f, stderr=f, stdin=subprocess.PIPE)
+						# process.wait()
+						# if not process.returncode ==0:
+						# 	f.seek(0)
+						# 	output = f.read()
+						# 	print("[ERROR] "+str(output))
+
+						# f = tempfile.TemporaryFile()
+						# if sys.platform == 'win32':
+						# 	command = command.encode(sys.stdout.encoding)
+
+						# command = tp_command_template
+						# command = command.replace("$dstname",os.path.join(config['output-root'],png_file_name.split('.')[0]+'_alpha'+ext))
+						# command = command.replace("$srcname",input_file_path)
+						# command = command.replace("$opt",'ALPHA')
+						# command = command.replace("$textureformat",textureformat)
+						# command = command.replace("$extra",config['options'].get('extra',''))
+						# command = command.replace("$plist",input_file_path.split('.')[0]+"_temp.plist")
+						# tp_cache = TPCache2.TPCache2(tp)
+						# # if sys.platform == 'win32':
+						# # 	command = command.encode(sys.stdout.encoding)
+						# # logger.debug("Compresser ALPHA Compressed"+str(command))
+						# tp_cache.command_arrange([TPTask.task_from_command(command.split())])
+
+						# if os.path.exists(ppm_path):
+						# 	os.remove(ppm_path)
+
+						pass
+					if config['options']['type']=='etc':
+						etcpack_root = utils.getProjectConfig("etcpack_root")
+						# textureformat = config['options']['textureformat']
+						# ext = ext_hash.get(textureformat,".pvr")
+
+						# command = tp_command_template
+						# command = command.replace("$dstname",os.path.join(config['output-root'],png_file_name.split('.')[0]+ext))
+						# command = command.replace("$opt",config['options']["opt"])
+						# command = command.replace("$srcname",input_file_path)
+						# command = command.replace("$plist",input_file_path.split('.')[0]+"_temp.plist")
+						# command = command.replace("$textureformat",textureformat)
+						# command = command.replace("$extra",config['options'].get('extra',''))
+						# tp_cache = TPCache2.TPCache2(tp)
+						# logger.debug("Compresser ETC1 "+command)
+						# if sys.platform == 'win32':
+						# 	command = command.encode(sys.stdout.encoding)
+						# tp_cache.command_arrange([TPTask.task_from_command(command.split())])
+
+						
+						if not os.path.exists(config['output-root']):							
+							os.makedirs(config['output-root'])
+						command = etcpack_no_alpha_template
+						command = command.replace("$dstname",os.path.normpath(config['output-root']))
+						command = command.replace("$srcname",os.path.normpath(input_file_path))
+						logger.debug("Compresser ETCPACK NA "+command)
+						os.chdir(etcpack_root)
+						tp_cache = TPCache2.TPCache2(tp)
+						tp_cache.command_arrange([MaliTask.task_from_command(command.split())])
+
+						pass
+
+					if config['options']['type']=='astc':
+						astc_root = utils.getProjectConfig("astc_root")
+						if not os.path.exists(config['output-root']):							
+							os.makedirs(config['output-root'])
+
+						command = astc_template
+						command = command.replace("$dstname",os.path.normpath(os.path.join(config['output-root'],png_file_name.split('.')[0]+'.astc')))
+						command = command.replace("$srcname",os.path.normpath(input_file_path))
+						logger.debug("Compresser astc "+command)
+						os.chdir(astc_root)
 						f = tempfile.TemporaryFile()
 						process = subprocess.Popen(command.split(),stdout=f, stderr=f, stdin=subprocess.PIPE)
 						process.wait()
@@ -252,45 +330,6 @@ class CompressAction:
 							output = f.read()
 							print("[ERROR] "+str(output))
 
-						# f = tempfile.TemporaryFile()
-						# if sys.platform == 'win32':
-						# 	command = command.encode(sys.stdout.encoding)
-
-						command = tp_command_template
-						command = command.replace("$dstname",os.path.join(config['output-root'],png_file_name.split('.')[0]+'_alpha'+ext))
-						command = command.replace("$srcname",input_file_path)
-						command = command.replace("$opt",'ETC1_A')
-						command = command.replace("$textureformat",textureformat)
-						command = command.replace("$extra",config['options'].get('extra',''))
-						command = command.replace("$plist",input_file_path.split('.')[0]+"_temp.plist")
-						tp_cache = TPCache2.TPCache2(tp)
-						# if sys.platform == 'win32':
-						# 	command = command.encode(sys.stdout.encoding)
-						# logger.debug("Compresser ALPHA Compressed"+str(command))
-						tp_cache.command_arrange([TPTask.task_from_command(command.split())])
-
-						if os.path.exists(ppm_path):
-							os.remove(ppm_path)
-
-						pass
-					if config['options']['type']=='etc':
-
-						textureformat = config['options']['textureformat']
-						ext = ext_hash.get(textureformat,".pvr")
-
-						command = tp_command_template
-						command = command.replace("$dstname",os.path.join(config['output-root'],png_file_name.split('.')[0]+ext))
-						command = command.replace("$opt",config['options']["opt"])
-						command = command.replace("$srcname",input_file_path)
-						command = command.replace("$plist",input_file_path.split('.')[0]+"_temp.plist")
-						command = command.replace("$textureformat",textureformat)
-						command = command.replace("$extra",config['options'].get('extra',''))
-						tp_cache = TPCache2.TPCache2(tp)
-						logger.debug("Compresser ETC1 "+command)
-						if sys.platform == 'win32':
-							command = command.encode(sys.stdout.encoding)
-						tp_cache.command_arrange([TPTask.task_from_command(command.split())])
-						pass
 					
 				if '.plist' in input_file_path:
 					if os.path.exists(input_file_path):

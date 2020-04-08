@@ -116,6 +116,9 @@ class TPCache2():
     def save_files_to_cache_dir(self,files):
         cached_filenames = []
         for f in files:
+            # 实际不同工具生成文件的数量不同，因此可能出现预计的文件没有产出的情况，这种情况直接跳过即可
+            if not os.path.exists(f):
+                continue
             suffix = os.path.splitext(f)[1]
             f2 = md5_for_file(f) + suffix
             dirname = f2[0:2]
@@ -127,6 +130,7 @@ class TPCache2():
             rename = dirname+'/'+f2
             cached_filenames.append(rename)
         return cached_filenames
+
 
     def run_command_without_cache(self,task):
         output =  task.run()
